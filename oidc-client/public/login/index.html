@@ -1,0 +1,184 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="generator" content="Fundwave Fund Management">
+  <meta name="viewport" content="width=device-width, minimum-scale=1, initial-scale=1, user-scalable=yes">
+
+  <title>Fundwave Fund Management</title>
+  <meta name="description" content="Fundwave Fund Management">
+
+  <link rel="icon" href="/node_modules/@fundwave/images/brand/favicon.ico">
+
+  <link rel="manifest" id="my-manifest-placeholder">
+
+  <!-- See https://goo.gl/OOhYW5 -->
+  <link rel="manifest" href="/manifest.json">
+  <link rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/css?family=Slabo+13px">
+  <link rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/css?family=Slabo+27px">
+  <link rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/css?family=Roboto+Slab">
+  <link rel="stylesheet" type="text/css" href="/login/styles.css">
+  <script>
+    // const openIdPath = "";
+    // const openIdBaseUrl = "http://localhost:3000";
+    const openIdPath = "";
+    const openIdBaseUrl = "https://apitoken-service-dev-fmop7ymbka-uc.a.run.app";
+
+    function getURLParameter(name) {
+      let param = new URLSearchParams(location.search).get(name);
+      if (param) param = param.replace(/^"(.*)"$/, '$1');
+      return param;
+    }
+
+    function showErrorMessage() {
+
+      let error = getURLParameter('error');
+      let message = getURLParameter('message');
+      let messageDiv = document.getElementById('message');
+      if (error == 'servererror'){
+        messageDiv.innerHTML = message ? message : "Sorry! We were unable to sign you in.";
+      }
+      else if (error == 'noaccess') {
+        messageDiv.innerHTML = "Sorry! This account using which you signed in doesn't have access rights to this instance.";
+        messageDiv.innerHTML += "<br> To use another account, please <a href=# onclick=singlesignout()> sign out</a> from fundwave.";
+      }
+      else if (error == 'requiredmfa') {
+        messageDiv.innerHTML = "MFA is required to access this instance.";
+        messageDiv.innerHTML += "<br> Please <a href='javascript:enablemfa()'> enable</a> MFA for your account.";
+      }
+      else if(error == "invalidteam"){
+        messageDiv.innerHTML = "Sorry! We're unable to connect to this team url, please try again";
+      }
+      else
+        messageDiv.innerHTML = '';
+
+    }
+
+    function formLogin(e) {
+      e.preventDefault();
+      showButtonLoading();
+      fundwaveIdLogin("master");
+    }
+
+    function fundwaveIdLogin(realm){
+      localStorage.setItem("realm", realm);
+      let realmOpenIdPath = `${openIdPath}${realm ?? "master"}`;
+      let baseUrl = window.location.origin;
+      let redirectUri = baseUrl + "/loginRedirect";
+      let next = getURLParameter("next");
+      let serviceUserUrl = `${openIdBaseUrl}/${realmOpenIdPath}` + "/userAuth?redirectUri=" + encodeURIComponent(redirectUri);
+      window.location = serviceUserUrl;
+    }
+
+    function showPageLoading(){
+      document.getElementById('container').style.display = 'none';
+      document.getElementById('loader').style.display = 'block';
+    }
+
+    function showButtonLoading(){
+      document.getElementById('ssobtnicon').style.display = 'none';
+      document.getElementById('ssobtnloader').style.display = 'block';
+      document.getElementById('ssobtn').disabled = true;
+    }
+
+  </script>
+
+  <script>
+    var slideIndex = 0;
+    function showSlides() {
+      var i;
+      var slides = document.getElementsByClassName("mySlides");
+      for (i = 0; i < slides.length; i++) {
+        slides[i].style.display = "none";
+      }
+      slideIndex++;
+      if (slideIndex > slides.length) { slideIndex = 1 }
+      slides[slideIndex - 1].style.display = "block";
+      setTimeout(showSlides, 4000); // Change image every 4 seconds
+    }
+  </script>
+
+<body onload='showErrorMessage(); showSlides();'>
+
+  <div id="loader" class="loader">
+    <div style="display: block; margin: 30px;">
+      <img src="/node_modules/@fundwave/images/icons/loading-spinner.gif" style="height: 70px">
+    </div>
+    Verifying it's you...
+  </div>
+
+  <div id="container" class="container">
+
+    <div align="center">
+      <span id="message" class="error"></span>
+      <br>
+      <br>
+    </div>
+
+    <div id="sso" class="box" align=center>
+      <table class="elements">
+        <tr>
+          <td class="ironimagerow" align="center">
+            <img id="logo" src="https://fundwave.com/assets/img/logo-blue-ribbon.png">
+          </td>
+        </tr>
+        <tr>
+          <td align="center">
+            <span id="title" class="title">Welcome to Fundwave</span>
+          </td>
+        </tr>
+        <tr>
+          <td align=center>
+            <div class="slideshow-container">
+
+              <div class="mySlides fade" style="display: block;">
+                <img src="https://fundwave.com/assets/img/Dashboard_Header_1.png" style="height:100%">
+              </div>
+
+              <div class="mySlides fade">
+                <img src="https://fundwave.com/assets/img/Dashboard_Header_2.png" style="height:100%">
+              </div>
+
+              <div class="mySlides fade">
+                <img src="https://fundwave.com/assets/img/Dashboard_Header.png" style="height:100%">
+              </div>
+
+              <div class="mySlides fade">
+                <img src="https://fundwave.com/assets/img/timeline.png" style="height:100%">
+              </div>
+
+              <div class="mySlides fade">
+                <img src="https://fundwave.com/assets/img/financial_data.png" style="height:100%">
+              </div>
+
+            </div>
+            <!-- <p><a class="link" href="https://fundwave.com/fund-administration-software/newsletter/" target="_blank">See
+                what's new</a></p> -->
+          </td>
+        </tr>
+        <tr>
+          <td align="center">
+                <button id="ssobtn" class="signin-button" type="submit" onclick="formLogin(event)">
+                  <img id="ssobtnicon" src="https://fundwave.com/assets/img/logo-blue-ribbon-wave.png" alt="" class="fundwaveIcon">
+                  <div id="ssobtnloader" class="buttonloader"></div>
+                  <span class="signinbuttontext">Sign-in with Fundwave</span>
+                </button>
+          </td>
+        </tr>
+      </table>
+    </div>
+
+    <div class="footer">
+      <a class="link" style="margin-right: 20px;" target=_blank
+        href="https://fundwave.com/support/#docs">Help</a>
+      <a class="link" style="margin-right: 20px;" target=_blank
+        href="https://fundwave.com/legal/terms-of-service/">Terms</a>
+      <a class="link" target=_blank href="https://fundwave.com/privacy/">Privacy</a>
+    </div>
+
+  </div>
+
+</body>
+
+</html>

@@ -1,0 +1,31 @@
+{
+  "dependencies": {
+    "@fundwave/auth-layer": "^3.0.6-base-url-fix.0",
+    "@fundwave/oidc-consumer": "^0.0.2",
+    "@keycloak/keycloak-admin-client": "^21.1.2",
+    "axios": "^1.4.0",
+    "bcrypt": "^5.1.0",
+    "cors": "^2.8.5",
+    "crypto": "^1.0.1",
+    "dotenv": "^16.1.4",
+    "express": "^4.18.2",
+    "express-session": "^1.17.3",
+    "helmet": "^7.0.0",
+    "mongodb": "^5.6.0",
+    "mongoose": "^7.3.0",
+    "nodemon": "^2.0.22",
+    "openid-client": "^5.4.2"
+  },
+  "type": "module",
+  "name": "fundwave-oidc-api",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js",
+    "dev": "nodemon index.js",
+    "deploy": "gcloud functions deploy apitoken-service-dev  --gen2 --region=us-central1 --entry-point oidcService --trigger-http --runtime nodejs20 --build-env-vars-file .env.build.yaml --env-vars-file .env.yaml"
+  },
+  "author": "",
+  "license": "ISC",
+  "description": ""
+}

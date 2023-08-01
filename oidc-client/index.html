@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <!-- <link rel="icon" type="image/svg+xml" href="/vite.svg" /> -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Fundwave Tokens</title>
+    <link rel="stylesheet" href="./src/index.css" />
+    <script type="module" src="/src/views/index.ts"></script>
+  </head>
+  <script>
+    function getURLParameter(name) {
+      let param = new URLSearchParams(location.search).get(name);
+      if (param) param = param.replace(/^"(.*)"$/, "$1");
+      return param;
+    }
+  </script>
+  <script>
+    // const openIdPath = "";
+    // const openIdBaseUrl = "http://localhost:3000";
+     const openIdPath = "";
+     const openIdBaseUrl = "https://apitoken-service-dev-fmop7ymbka-uc.a.run.app";
+    // Set the name of the hidden property and the change event for visibility
+    var hidden, visibilityChange;
+    if (typeof document.hidden !== "undefined") {
+      // Opera 12.10 and Firefox 18 and later support
+      hidden = "hidden";
+      visibilityChange = "visibilitychange";
+      state = "visibilityState";
+    } else if (typeof document.mozHidden !== "undefined") {
+      hidden = "mozHidden";
+      visibilityChange = "mozvisibilitychange";
+      state = "mozVisibilityState";
+    } else if (typeof document.msHidden !== "undefined") {
+      hidden = "msHidden";
+      visibilityChange = "msvisibilitychange";
+      state = "msVisibilityState";
+    } else if (typeof document.webkitHidden !== "undefined") {
+      hidden = "webkitHidden";
+      visibilityChange = "webkitvisibilitychange";
+      state = "webkitVisibilityState";
+    }
+
+    document.addEventListener(visibilityChange, function () {
+      if (!document[hidden]) validate();
+    });
+
+    function getLoginRedirectUrl() {
+      let loginUrl = window.location.origin + "/login";
+      return loginUrl;
+    }
+
+    //Verify token
+    function validate(load) {
+      if (load) showPageLoading();
+      let refreshToken = localStorage.getItem("refreshToken");
+      let token = sessionStorage.getItem("token");
+      let realm = localStorage.getItem("realm");
+      if (!refreshToken) {
+        window.location = getLoginRedirectUrl();
+        return;
+      }
+      let realmOpenIdPath = `${openIdPath}${realm ?? "master"}`;
+      let baseAddress = `${openIdBaseUrl}/${realmOpenIdPath}`;
+      var serviceUrl = baseAddress + "/token/refresh";
+      var redirectionRequest = new XMLHttpRequest();
+      redirectionRequest.open("GET", serviceUrl, true);
+      redirectionRequest.setRequestHeader("Accept", "application/json");
+      redirectionRequest.setRequestHeader("Content-Type", "application/json");
+      if (token)
+        redirectionRequest.setRequestHeader("Authorization", "Bearer " + token);
+      if (refreshToken)
+        redirectionRequest.setRequestHeader("Refresh-Token", refreshToken);
+      redirectionRequest.send();
+      redirectionRequest.onreadystatechange = processPreRequest;
+
+      function processPreRequest(e) {
+        hidePageLoading();
+
+        if (redirectionRequest.readyState == 4) {
+          if (redirectionRequest.status != 200) {
+            window.location = getLoginRedirectUrl();
+            return;
+          } else {
+            let data = redirectionRequest.response;
+            if (data) {
+              data = JSON.parse(data);
+              let token = data["token"];
+              let refreshToken = data["refreshToken"];
+              if (token) sessionStorage.setItem("token", token);
+              if (refreshToken)
+                localStorage.setItem("refreshToken", refreshToken);
+            }
+          }
+        }
+      }
+    }
+    function showPageLoading() {
+      document.getElementById("app").authenticating = true;
+    }
+
+    function hidePageLoading() {
+      document.getElementById("app").authenticating = false;
+    }
+  </script>
+  <body onload="validate(true)">
+    <index-layout id="app"></index-layout>
+  </body>
+</html>

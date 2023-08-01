@@ -1,0 +1,6 @@
+{
+  "projects": {
+    "default": "fw-developerportal-dev",
+    "prod": "fw-developer-portal"
+  }
+}

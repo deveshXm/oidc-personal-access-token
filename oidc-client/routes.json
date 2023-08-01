@@ -1,0 +1,22 @@
+[
+  {
+    "pathname": "Access Tokens",
+    "path": "/",
+    "component": "client-dashboard",
+    "drawer": 0,
+    "icon": "vaadin:key"
+  },
+  {
+    "pathname": "API Docs",
+    "path": "/apidocs",
+    "component": "api-docs",
+    "drawer": 1,
+    "icon" : "vaadin:book"
+  },
+  {
+    "pathname": "Generate Tokens",
+    "path": "/generate_access_token",
+    "component": "generate-token"
+  },
+  { "pathname": "Error", "path": "/error", "component": "error-page" }
+]

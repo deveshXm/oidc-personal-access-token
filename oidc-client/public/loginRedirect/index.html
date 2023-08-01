@@ -1,0 +1,43 @@
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="generator" content="Fundwave Fund Management">
+    <meta name="viewport" content="width=device-width, minimum-scale=1, initial-scale=1, user-scalable=yes">
+
+    <title>Fundwave Fund Management</title>
+    <meta name="description" content="Fundwave Fund Management">
+
+    <link rel="icon" href="/node_modules/@fundwave/images/brand/favicon.ico">
+
+    <link rel="manifest" id="my-manifest-placeholder">
+
+  <script>
+    function getURLParameter(name) {
+      let param = new URLSearchParams(location.search).get(name);
+      if (param) param = param.replace(/^"(.*)"$/, '$1');
+      return param;
+    }
+    token = getURLParameter("token");
+    refreshToken = getURLParameter("refresh_token");
+    if(token && refreshToken){
+        sessionStorage.setItem("token", token);
+        localStorage.setItem("refreshToken", refreshToken);
+        window.location = "/"
+    }else{
+      window.location = "/login?error=servererror";
+    }
+  </script>
+
+  
+  <body>
+    <div style="text-align: center; margin-top: 5%; font-size: 20px; color: #515151; font-family:'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif">
+      <div style="display: block; margin: 30px;">
+        <img src="/node_modules/@fundwave/images/icons/loading-spinner.gif" style="height: 70px">
+      </div>
+      Verifying it's you...
+    </div>
+  </body>
+
+</html>
